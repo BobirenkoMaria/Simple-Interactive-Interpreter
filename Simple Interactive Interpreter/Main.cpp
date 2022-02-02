@@ -7,10 +7,11 @@
 int main() {
 	setlocale(LC_ALL, "RU");
 
-	cout << "¬ведите математическое выражение: ";
+	cout << "¬ведите математическое выражение: xxx =qqqqq+1234 =ooooooo = w=pp";
 
-	std::string UserStr;
-	getline(cin, UserStr);
+	std::string UserStr = "xxx =qqqqq+1234 =ooooooo = w=pp";
+//	getline(cin, UserStr);
+	int InputClock = clock();
 
 	Redactor redactedStr(UserStr);
 	UserStr = redactedStr.RedactedString();
@@ -23,8 +24,8 @@ int main() {
 
 	for (int i = 0; i < names.size(); i++) {
 		cout << "Ќазвание переменной: " << names[i] << endl;
-		cout << "ѕомещенное выражение в переменную: " << mathExpressions[i] << endl;
+		cout << "ѕомещенное выражение в переменную: " << mathExpressions[i] << endl << endl;
 	}
-	cout << clock() << " миллисекунд" << endl;
+	cout << clock() - InputClock << " мс" << endl;
 
 }

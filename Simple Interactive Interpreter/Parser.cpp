@@ -5,7 +5,7 @@
 // отыскивает название и выражение переменной/функции
 void Parser::ParseStringToExpressions(string expression, int numExpression)
 {
-	for (int i = 0; i < expression.length(); i++) { //парсит одно равно (то есть если х=y=z, то браться будет только x=y или y=z)
+	for (int i = 0; i < expression.length(); i++) { //парсит одно равно
 		if (expression[i] == '=') { // если выражение эквивалентно другой переменной/функции или другому выражению
 			if (expression[i-1] == ')') { // если выражение является функцией, то берем его название
 				ParseCharToChar(&name, expression, expression.size() - expression.find('='));
@@ -39,7 +39,6 @@ void Parser::Parse()
 {
 	DividingStringIntoParts();
 	for (int i = 0; i < DividedExpression.size(); i++) { 
-		if(i > 0)
 		ParseStringToExpressions(DividedExpression[i], i); 
 		names.push_back(name);
 		mathExpressions.push_back(mathExpression);
@@ -93,7 +92,8 @@ void Parser::DividingStringIntoParts()
 
 	for (int i = 0; i < indexes.size(); i++) {
 		if (i == 0) {
-			DividedExpression.push_back(userString.substr(0, indexes[1]));
+			DividedExpression.push_back(userString.substr(0, 
+				(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[1]));
 		}
 		else DividedExpression.push_back(userString.substr(indexes[i - 1] + 1, 
 			(i == indexes.size()-1) ? (userString.length()-1) : indexes[i + 1]));
