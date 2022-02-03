@@ -1,16 +1,17 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "UserStringRedactor.h"
 #include "Parser.h"
-
+#include "Calculate.h"
 
 int main() {
 	setlocale(LC_ALL, "RU");
 
-	cout << "Введите математическое выражение: xxx =qqqqq+1234 =ooooooo = w=pp";
+	cout << "Enter mathematic expression: ";
 
-	std::string UserStr = "xxx =qqqqq+1234 =ooooooo = w=pp";
-//	getline(cin, UserStr);
+	std::string UserStr;
+	getline(cin, UserStr);
 	int InputClock = clock();
 
 	Redactor redactedStr(UserStr);
@@ -19,13 +20,12 @@ int main() {
 	Parser parseUserString(UserStr);
 	parseUserString.Parse();
 
-	vector<string> names = parseUserString.GetName();
-	vector<string> mathExpressions = parseUserString.GetMathExpression();
+	vector<string> values = parseUserString.GetValues();
 
-	for (int i = 0; i < names.size(); i++) {
-		cout << "Название переменной: " << names[i] << endl;
-		cout << "Помещенное выражение в переменную: " << mathExpressions[i] << endl << endl;
-	}
+
+	Calculate calculate;
+	double solve = calculate.TheSolve(values[0], values[1], parseUserString.GetMathAction());
+	cout << "Solve: " << solve << endl;
+
 	cout << clock() - InputClock << " мс" << endl;
-
 }

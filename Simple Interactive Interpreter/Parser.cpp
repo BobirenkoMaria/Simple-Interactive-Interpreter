@@ -1,61 +1,57 @@
 #include "Parser.h"
 #include "Data.h"
+#include "Calculate.h"
 #include <vector>
+#include <iostream>
 
 // отыскивает название и выражение переменной/функции
-void Parser::ParseStringToExpressions(string expression, int numExpression)
+void Parser::ParseStringToExpressions(string expression, int numExpression, char element)
 {
-	for (int i = 0; i < expression.length(); i++) { //парсит одно равно
-		if (expression[i] == '=') { // если выражение эквивалентно другой переменной/функции или другому выражению
-			if (expression[i-1] == ')') { // если выражение является функцией, то берем его название
-				ParseCharToChar(&name, expression, expression.size() - expression.find('='));
-				// проверка собственная ли это функция или стандартная?
-				if (name == "sin" || name == "cos" || name == "asin" || name == "acos" || name == "log" || name == "tan" || name == "cot") { // стандартная функция
-					key = STANDART_FUNCTION;
-				}
-				else key = FUNCTION; // собственная, если таковой не существует, то будет предупреждение
-			}
-			else if (numExpression == 0) { // если это переменная
-				ParseCharToChar(&name, expression, expression.find('='));
+	for (int i = 0; i < expression.length(); i++) {
+		if (expression[i] == element) {
+			if (numExpression == 0) { // если это переменная
+				ParseCharToChar(&value_1, expression, i);
 				key = VALUE;
 			}
 			else {
-				name = mathExpression;
+				value_1 = value_2;
 			}
 
-			position = i+1;
+			position = i + 1;
 
-			if (expression[i] != position && expression[i] == '=') { // будем брать ссылку на другую переменную/функцию или мат.выражение
-				ParseCharToChar(&mathExpression, expression, expression.size() - (expression.find('=') - 1));
+			if (expression[i] != position && expression[i] == element) { // будем брать ссылку на другую переменную/функцию или мат.выражение
+				ParseCharToChar(&value_2, expression, expression.size() - (i - 1));
 			}
-			
 		}
 	}
+	mathAction = element;
 
-	CreateNewValue();
+	position = 0;
+//	CreateNewValue();
 }
 
 void Parser::Parse()
 {
 	DividingStringIntoParts();
-	for (int i = 0; i < DividedExpression.size(); i++) { 
-		ParseStringToExpressions(DividedExpression[i], i); 
-		names.push_back(name);
-		mathExpressions.push_back(mathExpression);
+	if (error == false) {
+		for (int i = 0; i < DividedExpression.size(); i++) {
+			ParseStringToExpressions(DividedExpression[i], i, '=');
+			ParseStringToExpressions(value_2, i, '+');
 
-		position = 0;
-		
+			values.push_back(value_1);
+			values.push_back(value_2);
+		}
 	}
 }
 
-vector<string> Parser::GetName()
+vector<string> Parser::GetValues()
 {
-	return names;
+	return values;
 }
 
-vector<string> Parser::GetMathExpression()
+char Parser::GetMathAction()
 {
-	return mathExpressions;
+	return mathAction;
 }
 
 
@@ -75,13 +71,18 @@ vector<int> Parser::FindElements(char element, string expression) {
 }
 
 // помещаем названия переменных и функций во временную базу данных
-void Parser::CreateNewValue()
+/*void Parser::CreateNewValue()
 {
 	switch (key)
 	{
-	case VALUE: value.push_back(Values(name, mathExpression)); break;
+	case VALUE: _Expressions.push_back(name, mathExpression); break;
 	default: break;
 	}
+}*/
+
+void Parser::IfInvalidSintaxis()
+{
+	cerr << endl << "You have invalid sintax" << endl;
 }
 
 // разбивает пользовательский ввод на части (x=y=z  =>  x=y и y=z)
@@ -90,12 +91,20 @@ void Parser::DividingStringIntoParts()
 	vector<int> indexes;
 	indexes = FindElements('=', userString);
 
-	for (int i = 0; i < indexes.size(); i++) {
-		if (i == 0) {
-			DividedExpression.push_back(userString.substr(0, 
-				(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[1]));
+	if (indexes.size() == 2) {
+		for (int i = 0; i < indexes.size(); i++) {
+			if (i == 0) {
+				DividedExpression.push_back(userString.substr(0,
+					(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[1]));
+			}
+			else DividedExpression.push_back(userString.substr(indexes[i - 1] + 1,
+				(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[i + 1]));
 		}
-		else DividedExpression.push_back(userString.substr(indexes[i - 1] + 1, 
-			(i == indexes.size()-1) ? (userString.length()-1) : indexes[i + 1]));
+	}
+	else if (indexes.size() == 1) {
+		DividedExpression.push_back(userString);
+	}
+	else {
+		IfInvalidSintaxis();
 	}
 }

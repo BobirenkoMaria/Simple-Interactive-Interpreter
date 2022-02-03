@@ -24,11 +24,11 @@
     <ClCompile Include="Parser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Calculate.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="UserStringRedactor.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -38,10 +38,7 @@
     <ClInclude Include="Data.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Functions.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Values.h">
+    <ClInclude Include="Calculate.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
