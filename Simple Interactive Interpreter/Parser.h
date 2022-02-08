@@ -15,8 +15,7 @@ public:
 private:
 	string userString;
 	
-	string value_1;
-	string value_2;
+	string expression;
 	char mathAction;
 
 	vector<string> values;
@@ -34,17 +33,24 @@ private:
 		VALUE,
 		FUNCTION,
 		STANDART_FUNCTION,
-		PLUS,
-		MINUS,
-		MULTIPLE,
-		DIVISION,
-		EQUALS
+		_LASTELEMENT
 	};
 
-	void ParseStringToExpressions(string expression, int numExpression, char element);
-	void DividingStringIntoParts(); 
+	enum PriorityOfMathOperations {
+		EQUALS,
+		MULTIPLE,
+		DIVISION,
+		PLUS,
+		MINUS,
+		_LASTELEMENT
+	};
+
+	void ParseStringToExpressions(string _exp, int numExpression, char element);
+	void DividingStringIntoParts(char element);
 	void ParseCharToChar(string* nameOrExpression, string expression, int end);
 	vector<int> FindElements(char element, string expression);
-//	void CreateNewValue();
+	vector<int> FindElements(vector<char> element, string expression);
+	int EnumOfMathOperation(char element);
+	void CreateNewValue();
 	void IfInvalidSintaxis();
 };

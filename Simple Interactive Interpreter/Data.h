@@ -1,5 +1,9 @@
+#pragma once
+
 #include <vector>
+#include <string>
 using namespace std;
 
 
-vector<vector<string>> _Expressions;
+static vector<string> Data_Expressions;
+static vector<vector<string>> Data_Values;

@@ -35,10 +35,10 @@
     <ClInclude Include="Parser.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Data.h">
+    <ClInclude Include="Calculate.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Calculate.h">
+    <ClInclude Include="Data.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

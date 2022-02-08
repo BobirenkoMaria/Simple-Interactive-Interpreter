@@ -1,45 +1,41 @@
 #include "Parser.h"
-#include "Data.h"
 #include "Calculate.h"
+#include "Data.h" 
 #include <vector>
 #include <iostream>
 
 // отыскивает название и выражение переменной/функции
-void Parser::ParseStringToExpressions(string expression, int numExpression, char element)
+void Parser::ParseStringToExpressions(string _exp, int numExpression, char element)
 {
-	for (int i = 0; i < expression.length(); i++) {
-		if (expression[i] == element) {
+	for (int i = 0; i < _exp.length(); i++) {
+		if (_exp[i] == element) {
 			if (numExpression == 0) { // если это переменная
-				ParseCharToChar(&value_1, expression, i);
+				ParseCharToChar(&expression, _exp, i);
 				key = VALUE;
 			}
 			else {
-				value_1 = value_2;
+				expression = expression;
 			}
 
 			position = i + 1;
 
-			if (expression[i] != position && expression[i] == element) { // будем брать ссылку на другую переменную/функцию или мат.выражение
-				ParseCharToChar(&value_2, expression, expression.size() - (i - 1));
+			if (_exp[i] != position && _exp[i] == element) { // будем брать ссылку на другую переменную/функцию или мат.выражение
+				ParseCharToChar(&expression, _exp, _exp.size() - (i - 1));
 			}
 		}
 	}
 	mathAction = element;
 
 	position = 0;
-//	CreateNewValue();
 }
 
 void Parser::Parse()
 {
-	DividingStringIntoParts();
 	if (error == false) {
 		for (int i = 0; i < DividedExpression.size(); i++) {
+			DividingStringIntoParts('=');
 			ParseStringToExpressions(DividedExpression[i], i, '=');
-			ParseStringToExpressions(value_2, i, '+');
-
-			values.push_back(value_1);
-			values.push_back(value_2);
+			values.push_back(expression);
 		}
 	}
 }
@@ -69,16 +65,61 @@ vector<int> Parser::FindElements(char element, string expression) {
 
 	return elementsIndex;
 }
+vector<int> Parser::FindElements(vector<char> element, string expression)
+{
+	vector<int> IndexAndKey;
+	vector<vector<int>> elementsIndex;
+
+	for (int i = 0; i < expression.length(); i++) {
+		for (int j = 0; j < element.size(); j++) {
+			if (expression[i] == element[j]) {
+				IndexAndKey.push_back(i);
+				IndexAndKey.push_back(EnumOfMathOperation(expression[i]));
+
+				elementsIndex.push_back(IndexAndKey);
+				IndexAndKey.clear();
+			}
+		}
+	}
+}
+
+// приоритет математических операций
+int Parser::EnumOfMathOperation(char element)
+{
+	int priority;
+	switch (element)
+	{
+	case '=':
+		priority = EQUALS;
+		break;
+	case '*':
+		priority = MULTIPLE;
+		break;
+	case '/':
+		priority = DIVISION;
+		break;
+	case '+':
+		priority = PLUS;
+		break;
+	case '-':
+		priority = MINUS;
+		break;
+	default:
+		break;
+	}
+
+	return priority;
+}
 
 // помещаем названия переменных и функций во временную базу данных
-/*void Parser::CreateNewValue()
+void Parser::CreateNewValue()
 {
 	switch (key)
 	{
-	case VALUE: _Expressions.push_back(name, mathExpression); break;
+	case VALUE: Data_Values.push_back(values); break;
 	default: break;
 	}
-}*/
+}
 
 void Parser::IfInvalidSintaxis()
 {
@@ -86,25 +127,16 @@ void Parser::IfInvalidSintaxis()
 }
 
 // разбивает пользовательский ввод на части (x=y=z  =>  x=y и y=z)
-void Parser::DividingStringIntoParts()
+void Parser::DividingStringIntoParts(char element)
 {
 	vector<int> indexes;
-	indexes = FindElements('=', userString);
+	indexes = FindElements(element, userString);
 
-	if (indexes.size() == 2) {
-		for (int i = 0; i < indexes.size(); i++) {
-			if (i == 0) {
-				DividedExpression.push_back(userString.substr(0,
-					(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[1]));
-			}
-			else DividedExpression.push_back(userString.substr(indexes[i - 1] + 1,
-				(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[i + 1]));
-		}
-	}
-	else if (indexes.size() == 1) {
-		DividedExpression.push_back(userString);
-	}
-	else {
-		IfInvalidSintaxis();
+	for (int i = 0; i < indexes.size(); i++) {
+		if (i == 0) DividedExpression.push_back(userString.substr(0,
+			(i == indexes.size() - 1) ? (userString.length() - 1) : indexes[1]));
+
+		else DividedExpression.push_back(userString.substr(indexes[i - 1] + 1,
+			(i == indexes.size() - 1) ? (userString.length() - 1) : (indexes[i+1] - indexes[i - 1] - 1)));
 	}
 }

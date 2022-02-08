@@ -10,22 +10,24 @@ int main() {
 
 	cout << "Enter mathematic expression: ";
 
-	std::string UserStr;
-	getline(cin, UserStr);
+	std::string UserStr = "ce=64=67=23=86=h=shu=5e=e";
+//	getline(cin, UserStr);
 	int InputClock = clock();
 
-	Redactor redactedStr(UserStr);
-	UserStr = redactedStr.RedactedString();
+	if (UserStr.find(' ')) {
+		Redactor redactedStr(UserStr);
+		UserStr = redactedStr.RedactedString();
+	}
 
 	Parser parseUserString(UserStr);
 	parseUserString.Parse();
 
-	vector<string> values = parseUserString.GetValues();
+/*	vector<string> values = parseUserString.GetValues();
 
 
 	Calculate calculate;
 	double solve = calculate.TheSolve(values[0], values[1], parseUserString.GetMathAction());
-	cout << "Solve: " << solve << endl;
+	cout << "Solve: " << solve << endl; */
 
 	cout << clock() - InputClock << " мс" << endl;
 }
